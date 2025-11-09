@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Biblioteca WebRetro (corregida)</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; background:#0f0f10; color:#eee; text-align:center; padding:20px; }
+    .game { margin:8px; display:inline-block; }
+    button { padding:10px 14px; border-radius:8px; border:none; cursor:pointer; background:#1976d2; color:#fff; }
+    .meta { color:#bbb; font-size:0.9rem; margin-bottom:10px; }
+  </style>
+</head>
+<body>
+  <h1>🎮 Biblioteca WebRetro</h1>
+  <p class="meta">Haz clic en un juego para abrirlo en WebRetro. (Se usan rutas relativas dentro de <code>/roms/</code>.)</p>
+  <div id="games">Cargando lista de ROMs...</div>
+
+<script>
+(async function() {
+  const container = document.getElementById('games');
+
+  // Mapea extensiones a cores si quieres forzar alguno, pero por seguridad dejamos autodetect.
+  const coreMap = {
+    'gba': 'mgba',      // si prefieres forzar: descomenta y ajusta según tu versión
+    'nes': 'nestopia',
+    'sfc': 'snes9x',
+    'smc': 'snes9x'
+  };
+
+  function makeButton(name, core, relInsideRoms) {
+    const btn = document.createElement('button');
+    btn.textContent = name;
+    btn.onclick = () => {
+      // relInsideRoms debe ser la ruta RELATIVA DENTRO de /roms (sin "roms/" delante)
+      const encoded = encodeURIComponent(relInsideRoms).replace(/%2F/g, '/');
+      // NO poner 'roms/' en el param, WebRetro ya lo añade.
+      window.location.href = `/?core=${encodeURIComponent(core)}&rom=${encoded}`;
+    };
+    const div = document.createElement('div');
+    div.className = 'game';
+    div.appendChild(btn);
+    return div;
+  }
+
+  // Parseo del listing HTML (si el servidor permite directory listing)
+  async function parseDirListingHtml(url) {
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error('no-listing');
+      const text = await resp.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      const anchors = Array.from(doc.querySelectorAll('a[href]'));
+      const base = resp.url;
+      const files = anchors.map(a => {
+        try {
+          const u = new URL(a.getAttribute('href'), base);
+          let relative = u.pathname.replace(/^\//, ''); // e.g. "roms/file.gba" o "file.gba"
+          relative = relative.split(/[?#]/)[0];
+          const name = decodeURIComponent(u.pathname.split('/').pop());
+          return { name, rel: relative };
+        } catch(e) {
+          return null;
+        }
+      }).filter(Boolean)
+        .filter(i => i.name && !i.name.endsWith('/'));
+      return files;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Parseo de index.json (fallback)
+  async function parseIndexJson(url) {
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error('no-json');
+      const arr = await resp.json();
+      if (!Array.isArray(arr)) throw new Error('bad-json');
+      // arr debe ser lista de NOMBRES (ej: ["Mario.gba","Otro.gba"])
+      return arr.map(name => ({ name, rel: name }));
+    } catch(e) {
+      return null;
+    }
+  }
+
+  // Normalizar a ruta RELATIVA dentro de /roms (sin "roms/" delante)
+  function relToInsideRoms(rel) {
+    if (!rel) return rel;
+    rel = rel.replace(/^\.?\//, ''); // quitar ./ o /
+    if (rel.toLowerCase().startsWith('roms/')) {
+      return rel.slice(5); // quitar "roms/"
+    }
+    return rel;
+  }
+
+  // Primero intentamos listing HTML, sino index.json
+  let files = await parseDirListingHtml('./roms/');
+  if (!files || files.length === 0) {
+    files = await parseIndexJson('./roms/index.json');
+  }
+
+  if (!files || files.length === 0) {
+    container.innerHTML = '<strong>No se pudo listar /roms/.</strong><br>Si tu servidor no hace directory listing, crea <code>/roms/index.json</code> con la lista de nombres (te dejo comando abajo).';
+    return;
+  }
+
+  container.innerHTML = '';
+  files.sort((a,b)=>a.name.localeCompare(b.name, undefined, {sensitivity:'base'}));
+
+  for (const f of files) {
+    const relRaw = f.rel;
+    const relInside = relToInsideRoms(relRaw); // ES LO IMPORTANTE: quitar "roms/" si existe
+    const name = f.name;
+    const ext = name.split('.').pop().toLowerCase();
+    const core = coreMap[ext] || 'autodetect';
+    container.appendChild(makeButton(name, core, relInside));
+  }
+})();
+</script>
+</body>
+</html>
