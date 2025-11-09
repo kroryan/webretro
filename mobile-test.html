@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+    <title>WebRetro Mobile - Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            text-align: center;
+        }
+        
+        .test-info {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-list {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .feature-list li {
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(0,255,0,0.1);
+            border-radius: 4px;
+        }
+        
+        .start-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+            margin: 20px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .start-button:hover {
+            background: #0056b3;
+        }
+        
+        @media (max-width: 768px) {
+            .start-button {
+                display: block;
+                margin: 20px auto;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 WebRetro Mobile</h1>
+    
+    <div class="test-info">
+        <h2>Compatibilidad Móvil Implementada</h2>
+        <p>Se han añadido las siguientes características para dispositivos móviles iOS y Android:</p>
+    </div>
+    
+    <div class="feature-list">
+        <h3>✅ Funcionalidades Implementadas:</h3>
+        <ul>
+            <li><strong>Controles Táctiles:</strong> D-pad virtual, botones A/B/X/Y, botones L/R/L2/R2, Start/Select</li>
+            <li><strong>Detección Automática:</strong> Se activan automáticamente en dispositivos móviles</li>
+            <li><strong>Orientación Adaptativa:</strong> Soporte para modo retrato y paisaje</li>
+            <li><strong>Interfaz Optimizada:</strong> Menús y botones adaptados para pantallas táctiles</li>
+            <li><strong>Retroalimentación Háptica:</strong> Vibración en dispositivos compatibles</li>
+            <li><strong>Gestos:</strong> Deslizar hacia arriba para mostrar menú, hacia abajo para ocultar</li>
+            <li><strong>Auto-ocultar:</strong> Los controles se ocultan después de 10 segundos de inactividad</li>
+            <li><strong>PWA Mejorada:</strong> Mejor experiencia como aplicación web instalable</li>
+            <li><strong>Prevención de Zoom:</strong> Evita el zoom accidental durante el juego</li>
+            <li><strong>Canvas Responsivo:</strong> Ajusta automáticamente el tamaño según los controles</li>
+        </ul>
+        
+        <h3>🎯 Controles Móviles:</h3>
+        <ul>
+            <li><strong>D-Pad:</strong> Control direccional (izquierda del screen)</li>
+            <li><strong>Botones de Acción:</strong> A, B, X, Y (derecha del screen)</li>
+            <li><strong>Botones de Hombro:</strong> L, R, L2, R2 (centro superior)</li>
+            <li><strong>Start/Select:</strong> Botones de sistema (centro inferior)</li>
+            <li><strong>Menú Móvil:</strong> Botón hamburguesa (esquina superior izquierda)</li>
+            <li><strong>Toggle Controles:</strong> Botón CTRL para mostrar/ocultar controles</li>
+        </ul>
+        
+        <h3>📱 Compatibilidad:</h3>
+        <ul>
+            <li><strong>iOS Safari:</strong> iPhone y iPad</li>
+            <li><strong>Android Chrome:</strong> Teléfonos y tablets Android</li>
+            <li><strong>Navegadores Móviles:</strong> Firefox Mobile, Edge Mobile, etc.</li>
+            <li><strong>PWA:</strong> Instalable como aplicación nativa</li>
+        </ul>
+    </div>
+    
+    <a href="index.html" class="start-button">🎮 Iniciar WebRetro</a>
+    <a href="library.html" class="start-button">📚 Biblioteca de ROMs</a>
+    
+    <div class="test-info">
+        <h3>🔧 Para Probar:</h3>
+        <p>1. Abre WebRetro en tu dispositivo móvil<br>
+        2. Los controles táctiles aparecerán automáticamente<br>
+        3. Carga una ROM y prueba los controles<br>
+        4. Usa gestos para mostrar/ocultar menú<br>
+        5. Instala como PWA desde el menú del navegador</p>
+    </div>
+    
+    <script>
+        // Simple mobile detection for this test page
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            document.body.innerHTML += '<div style="background: green; padding: 10px; margin: 20px 0; border-radius: 8px;"><strong>✅ Dispositivo móvil detectado!</strong><br>Los controles táctiles estarán disponibles en WebRetro.</div>';
+        } else {
+            document.body.innerHTML += '<div style="background: orange; padding: 10px; margin: 20px 0; border-radius: 8px;"><strong>⚠️ Dispositivo de escritorio detectado</strong><br>Los controles móviles no se mostrarán, pero puedes simularlos redimensionando la ventana o usando las herramientas de desarrollador.</div>';
+        }
+    </script>
+</body>
+</html>
